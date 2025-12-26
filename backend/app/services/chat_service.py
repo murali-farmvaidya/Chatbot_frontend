@@ -4,7 +4,12 @@ from app.db.mongo import messages, sessions
 from app.models.message import message_doc
 from app.services.lightrag_service import query_lightrag
 from app.utils.cleaner import clean_response
-from app.services.chat_logic import is_dosage_question
+from app.services.chat_logic import is_dosage_question, is_factual_company_question
+from app.services.followup_service import (
+    needs_follow_up,
+    generate_followup,
+    can_finalize
+)
 
 def generate_title(text: str) -> str:
     words = text.strip().split()
@@ -16,10 +21,11 @@ def get_history(session_id):
 
 def handle_chat(session_id, user_message):
     print("🔥 NEW HANDLE_CHAT EXECUTED")
-    # 1️⃣ Save user message
+    
+    # Save user message
     messages.insert_one(message_doc(session_id, "user", user_message))
 
-    # 2️⃣ 🔥 UPDATE last accessed time
+    # Update session timestamp
     sessions.update_one(
         {"_id": ObjectId(session_id)},
         {"$set": {"updated_at": datetime.utcnow()}}
@@ -36,27 +42,39 @@ def handle_chat(session_id, user_message):
             {"$set": {"title": title}}
         )
 
-    # 🚫 NEVER ask follow-up for dosage questions
+    session = sessions.find_one({"_id": ObjectId(session_id)})
+
+    # 🚫 Dosage → direct answer always
     if is_dosage_question(user_message):
         print("✅ DOSAGE BRANCH RETURNING LIGHTRAG ANSWER")
-
-        # ❗ get history EXCLUDING the latest user message
         history = get_history(session_id)[:-1]
-
-        answer = query_lightrag(user_message, history)
-        answer = clean_response(answer)
-
+        answer = clean_response(query_lightrag(user_message, history))
         messages.insert_one(message_doc(session_id, "assistant", answer))
         return answer
 
-    # 3️⃣ Get history
-    history = get_history(session_id)
+    # � FACTUAL / COMPANY QUESTIONS → NEVER FOLLOW-UP
+    if is_factual_company_question(user_message):
+        history = get_history(session_id)[:-1]
+        answer = clean_response(query_lightrag(user_message, history))
+        messages.insert_one(message_doc(session_id, "assistant", answer))
+        return answer
 
-    # 4️⃣ Get AI response
-    answer = query_lightrag(user_message, history[:-1])
-    answer = clean_response(answer)
+    # 🔁 FOLLOW-UP LOGIC
+    if session.get("awaiting_followup") or needs_follow_up(session_id):
 
-    # 5️⃣ Save assistant response
+        if not can_finalize(session):
+            followup_q = generate_followup(session_id)
+            messages.insert_one(message_doc(session_id, "assistant", followup_q))
+            return followup_q
+
+        # Enough followups → finalize
+        sessions.update_one(
+            {"_id": ObjectId(session_id)},
+            {"$set": {"awaiting_followup": False}}
+        )
+
+    # ✅ FINAL ANSWER
+    history = get_history(session_id)[:-1]
+    answer = clean_response(query_lightrag(user_message, history))
     messages.insert_one(message_doc(session_id, "assistant", answer))
-
     return answer

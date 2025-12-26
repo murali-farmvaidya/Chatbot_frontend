@@ -12,7 +12,7 @@ export default function Sidebar({
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/sessions/", {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/sessions/`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.json())
@@ -20,7 +20,7 @@ export default function Sidebar({
     }, [token, refreshSessions]);
 
   async function deleteSession(id) {
-    await fetch(`http://localhost:8000/sessions/${id}`, {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/sessions/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` }
     });

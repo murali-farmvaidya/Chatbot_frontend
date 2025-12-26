@@ -1,7 +1,7 @@
-const API = "http://localhost:8000";
+const API = import.meta.env.VITE_BACKEND_URL;
 
 export function login(email, password) {
-  return fetch("http://localhost:8000/auth/login", {
+  return fetch(`${API}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
@@ -18,14 +18,15 @@ export const googleLogin = (token) =>
 export const newSession = (token) =>
   fetch(`${API}/sessions/`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+    headers: { Authorization: `Bearer ${token}` }
   }).then(r => r.json());
 
-export const sendMsg = (sessionId, message) =>
+export const sendMsg = (sessionId, message, token) =>
   fetch(`${API}/chat`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
     body: JSON.stringify({ session_id: sessionId, message })
   }).then(r => r.json());
