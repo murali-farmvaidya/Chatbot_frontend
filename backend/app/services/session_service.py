@@ -9,5 +9,5 @@ def create_session(user_id, title="New Chat"):
 def list_sessions(user_id):
     return [
         {"id": str(s["_id"]), "title": s["title"]}
-        for s in sessions.find({"user_id": user_id})
+        for s in sessions.find({"user_id": user_id}).sort("updated_at", -1)
     ]

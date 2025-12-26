@@ -8,11 +8,21 @@ export default function App() {
   const [token, setToken] = useState(null);
   const [activeSession, setActiveSession] = useState(null);
   const [view, setView] = useState("chat"); // chat | profile
+  const [refreshSessions, setRefreshSessions] = useState(0);
 
   useEffect(() => {
-    const saved = localStorage.getItem("access_token");
-    if (saved) setToken(saved);
+    const savedToken = localStorage.getItem("access_token");
+    const lastSession = localStorage.getItem("active_session");
+
+    if (savedToken) setToken(savedToken);
+    if (lastSession) setActiveSession(lastSession);
   }, []);
+
+  useEffect(() => {
+    if (activeSession) {
+      localStorage.setItem("active_session", activeSession);
+    }
+  }, [activeSession]);
 
   const handleLoginSuccess = (token) => {
     localStorage.setItem("access_token", token);
@@ -33,8 +43,10 @@ export default function App() {
         token={token}
         activeSession={activeSession}
         setActiveSession={setActiveSession}
+        refreshSessions={refreshSessions}
         onNewChat={() => {
-          setActiveSession(null);
+          localStorage.removeItem("active_session");
+          setActiveSession("NEW");
           setView("chat");
         }}
         onProfile={() => setView("profile")}
@@ -49,6 +61,7 @@ export default function App() {
             token={token}
             sessionId={activeSession}
             setActiveSession={setActiveSession}
+            onMessageSent={() => setRefreshSessions(x => x + 1)}
           />
         )}
       </div>

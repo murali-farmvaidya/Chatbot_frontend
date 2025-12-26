@@ -4,6 +4,7 @@ export default function Sidebar({
   token,
   activeSession,
   setActiveSession,
+    refreshSessions,
   onNewChat,
   onProfile,
   onLogout
@@ -11,12 +12,12 @@ export default function Sidebar({
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/sessions", {
+    fetch("http://localhost:8000/sessions/", {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.json())
       .then(setSessions);
-  }, [token]);
+    }, [token, refreshSessions]);
 
   async function deleteSession(id) {
     await fetch(`http://localhost:8000/sessions/${id}`, {

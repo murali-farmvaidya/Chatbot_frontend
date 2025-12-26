@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-export default function Chat({ token, sessionId, setActiveSession }) {
+export default function Chat({ token, sessionId, setActiveSession, onMessageSent }) {
   const [messages, setMessages] = useState([]);
   const [msg, setMsg] = useState("");
 
   // 🔹 Load history when session changes
   useEffect(() => {
-    if (sessionId) {
+    if (sessionId && sessionId !== "NEW") {
       fetch(`http://localhost:8000/messages/${sessionId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -22,7 +22,7 @@ export default function Chat({ token, sessionId, setActiveSession }) {
           }
         })
         .catch(() => setMessages([]));
-    } else {
+    } else if (sessionId === "NEW") {
       // New chat
       setMessages([]);
     }
@@ -33,8 +33,8 @@ export default function Chat({ token, sessionId, setActiveSession }) {
 
     let activeSid = sessionId;
 
-    // 🔹 Create new session if none selected
-    if (!activeSid) {
+    // 🔹 Create new session if NEW or null
+    if (!activeSid || activeSid === "NEW") {
       const s = await fetch("http://localhost:8000/sessions/", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` }
@@ -61,6 +61,8 @@ export default function Chat({ token, sessionId, setActiveSession }) {
       { role: "user", content: msg },
       { role: "assistant", content: res.response || "No response" }
     ]);
+
+    onMessageSent(); // 🔥 FORCE SIDEBAR REFRESH
 
     setMsg("");
   }
