@@ -51,11 +51,17 @@ export default function Chat({ token, sessionId, setActiveSession, onMessageSent
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(r => {
+          if (r.status === 401) {
+            // Token expired or invalid, logout user
+            localStorage.removeItem("access_token");
+            if (onLogout) onLogout();
+            return null;
+          }
           if (!r.ok) return [];
           return r.json();
         })
         .then(data => {
-          if (Array.isArray(data)) {
+          if (data && Array.isArray(data)) {
             setMessages(data);
           } else {
             setMessages([]);
@@ -65,15 +71,31 @@ export default function Chat({ token, sessionId, setActiveSession, onMessageSent
     } else if (sessionId === "NEW") {
       setMessages([]);
     }
-  }, [sessionId, token]);
+  }, [sessionId, token, onLogout]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/sessions/`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(r => r.json())
-      .then(setSessions);
-  }, [token, refreshSessions]);
+      .then(r => {
+        if (r.status === 401) {
+          // Token expired or invalid, logout user
+          localStorage.removeItem("access_token");
+          if (onLogout) onLogout();
+          return null;
+        }
+        if (!r.ok) return [];
+        return r.json();
+      })
+      .then(data => {
+        if (data && Array.isArray(data)) {
+          setSessions(data);
+        } else {
+          setSessions([]);
+        }
+      })
+      .catch(() => setSessions([]));
+  }, [token, refreshSessions, onLogout]);
 
   // Revealing text effect
   useEffect(() => {
@@ -136,13 +158,20 @@ export default function Chat({ token, sessionId, setActiveSession, onMessageSent
         const s = await fetch(`${import.meta.env.VITE_BACKEND_URL}/sessions/`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` }
-        }).then(r => r.json());
+        }).then(async r => {
+          if (r.status === 401) {
+            localStorage.removeItem("access_token");
+            if (onLogout) onLogout();
+            throw new Error("Unauthorized");
+          }
+          return r.json();
+        });
 
         activeSid = s.session_id;
         setActiveSession(activeSid);
       }
 
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
+      const chatResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -154,13 +183,26 @@ export default function Chat({ token, sessionId, setActiveSession, onMessageSent
         })
       });
 
+      if (chatResponse.status === 401) {
+        localStorage.removeItem("access_token");
+        if (onLogout) onLogout();
+        throw new Error("Unauthorized");
+      }
+
       clearInterval(latencyInterval);
       const endTime = Date.now();
       setLatency(((endTime - startTime) / 1000).toFixed(2));
 
       const newMessages = await fetch(`${import.meta.env.VITE_BACKEND_URL}/messages/${activeSid}`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then(r => r.json());
+      }).then(async r => {
+        if (r.status === 401) {
+          localStorage.removeItem("access_token");
+          if (onLogout) onLogout();
+          throw new Error("Unauthorized");
+        }
+        return r.json();
+      });
 
       setMessages(newMessages);
       

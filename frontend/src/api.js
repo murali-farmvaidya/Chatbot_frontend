@@ -5,7 +5,12 @@ export function login(email, password) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
-  }).then(res => res.json());
+  }).then(async res => {
+    if (!res.ok) {
+      throw new Error("Login failed");
+    }
+    return res.json();
+  });
 }
 
 export const googleLogin = (token) =>
@@ -13,13 +18,27 @@ export const googleLogin = (token) =>
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token })
-  }).then(r => r.json());
+  }).then(async r => {
+    if (!r.ok) {
+      throw new Error("Google login failed");
+    }
+    return r.json();
+  });
 
 export const newSession = (token) =>
   fetch(`${API}/sessions/`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` }
-  }).then(r => r.json());
+  }).then(async r => {
+    if (r.status === 401) {
+      localStorage.removeItem("access_token");
+      throw new Error("Unauthorized");
+    }
+    if (!r.ok) {
+      throw new Error("Failed to create session");
+    }
+    return r.json();
+  });
 
 export const sendMsg = (sessionId, message, token) =>
   fetch(`${API}/chat`, {
@@ -29,4 +48,14 @@ export const sendMsg = (sessionId, message, token) =>
       Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({ session_id: sessionId, message })
-  }).then(r => r.json());
+  }).then(async r => {
+    if (r.status === 401) {
+      localStorage.removeItem("access_token");
+      throw new Error("Unauthorized");
+    }
+    if (!r.ok) {
+      throw new Error("Failed to send message");
+    }
+    return r.json();
+  });
+
