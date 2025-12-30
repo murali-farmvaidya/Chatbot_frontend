@@ -4,8 +4,7 @@ pymongo
 requests
 werkzeug
 python-dotenv
-python-jose 
+python-jose[cryptography]
 google-auth
-passlib==1.7.4 
-bcrypt==3.2.2
-bson
+passlib[bcrypt]
+python-multipart
