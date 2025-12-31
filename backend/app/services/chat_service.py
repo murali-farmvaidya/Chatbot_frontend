@@ -151,11 +151,12 @@ def handle_chat(session_id, user_message):
         messages.insert_one(message_doc(session_id, "assistant", answer))
         return answer
 
-    # 📊 FACTUAL / COMPANY QUESTIONS → NEVER FOLLOW-UP
+    # 📊 FACTUAL / COMPANY QUESTIONS → NEVER FOLLOW-UP, NO HISTORY
+    # Don't pass history for factual questions to avoid entity confusion
+    # Use factual=True to avoid forcing answers when no information exists
     if is_factual_company_question(user_message):
-        print("✅ FACTUAL/COMPANY QUESTION - DIRECT ANSWER")
-        history = get_history(session_id)[:-1]
-        answer = clean_response(query_lightrag(user_message, history, language=detected_language))
+        print("✅ FACTUAL/COMPANY QUESTION - DIRECT ANSWER (NO HISTORY)")
+        answer = clean_response(query_lightrag(user_message, [], language=detected_language, factual=True))
         messages.insert_one(message_doc(session_id, "assistant", answer))
         return answer
 

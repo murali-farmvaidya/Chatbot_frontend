@@ -114,21 +114,24 @@ def is_dosage_question(text: str) -> bool:
 # ---------------- FACTUAL / COMPANY ----------------
 def is_factual_company_question(text: str) -> bool:
     keywords = [
-        "who is", "ceo", "founder", "director",
+        "who is", "ceo", "founder", "director", "chief",
         "how many", "number of", "count",
-        "patents", "years", "established",
-        "headquarters", "పేటెంట్", "ఎన్ని",
-        "कितने", "पेटेंट"
+        "patents", "years", "established", "started",
+        "headquarters", "location", "office",
+        "సీఈఓ", "ఎవరు", "పేటెంట్", "ఎన్ని",
+        "सीईओ", "कौन", "कितने", "पेटेंट"
     ]
 
     entities = [
-        "biofactor",
-        "farmvaidya",
+        "biofactor", "bio factor",
+        "farmvaidya", "farm vaidya",
         "aadhaar",
         "poshak",
         "invictus",
-        "బయోఫ్యాక్టర్",
-        "फार्मवैद्य"
+        "బయోఫ్యాక్టర్", "బయో ఫ్యాక్టర్",
+        "ఫార్మ్ వైద్య", "ఫార్మ్వైద్య",
+        "बायोफैक्टर", "बायो फैक्टर",
+        "फार्मवैद्य", "फार्म वैद्य"
     ]
 
     t = normalize(text)

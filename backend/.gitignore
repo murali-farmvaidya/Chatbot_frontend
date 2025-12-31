@@ -73,3 +73,10 @@ logs/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+
+
+#test files
+test_languages.py
+start_backend.ps1
+test_greetings.py
