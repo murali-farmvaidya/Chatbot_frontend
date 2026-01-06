@@ -182,6 +182,14 @@ def start_lightrag():
     """Start LightRAG server"""
     print_info("Starting LightRAG Server (port 9621)...")
     
+    # Ensure required directories exist
+    rag_storage = LIGHTRAG_DIR / "rag_storage"
+    inputs_dir = LIGHTRAG_DIR / "inputs"
+    
+    rag_storage.mkdir(exist_ok=True)
+    inputs_dir.mkdir(exist_ok=True)
+    print_info(f"Ensured directories exist: {rag_storage}, {inputs_dir}")
+    
     # Check if LightRAG venv exists
     if IS_WINDOWS:
         venv_python = LIGHTRAG_DIR / ".venv" / "Scripts" / "python.exe"
@@ -359,8 +367,13 @@ def main():
     
     # Wait for LightRAG to initialize and monitor for crashes
     print_info("Waiting for LightRAG to initialize...")
-    for i in range(10):  # Check for 10 seconds
+    import requests
+    lightrag_ready = False
+    
+    for i in range(30):  # Check for 30 seconds
         time.sleep(1)
+        
+        # Check if process died
         if lightrag_process.poll() is not None:
             print_error("LightRAG crashed during initialization!")
             # Print log files
@@ -382,8 +395,22 @@ def main():
                 print_error("Could not read error log")
             
             sys.exit(1)
+        
+        # Try to check if LightRAG API is responding
+        if i >= 5:  # Start checking after 5 seconds
+            try:
+                response = requests.get("http://localhost:9621/health", timeout=2)
+                if response.status_code == 200:
+                    lightrag_ready = True
+                    break
+            except:
+                pass  # Not ready yet
     
-    print_success("LightRAG initialization complete")
+    if not lightrag_ready:
+        print_warning("LightRAG process is running but health check didn't pass")
+        print_warning("Continuing anyway...")
+    else:
+        print_success("LightRAG initialization complete and API is responding")
     
     # Start Backend
     backend_process = start_backend()
