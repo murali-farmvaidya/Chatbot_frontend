@@ -248,7 +248,7 @@ def start_lightrag():
              "lightrag.api.lightrag_server:app",
              "--host", "0.0.0.0", 
              "--port", "9621",
-             "--log-level", "info"],
+             "--log-level", "INFO"],  # Uppercase required
             stdout=log_out,
             stderr=log_err,
             env=env,
