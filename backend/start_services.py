@@ -247,8 +247,7 @@ def start_lightrag():
             [str(venv_python), "-m", "uvicorn", 
              "lightrag.api.lightrag_server:app",
              "--host", "0.0.0.0", 
-             "--port", "9621",
-             "--log-level", "info"],  # Lowercase for uvicorn
+             "--port", "9621"],
             stdout=log_out,
             stderr=log_err,
             env=env,
