@@ -250,19 +250,30 @@ def start_lightrag():
     
     if venv_lightrag_cmd.exists():
         # Use venv's lightrag-server (local)
-        lightrag_cmd = str(venv_lightrag_cmd)
+        lightrag_cmd = [str(venv_lightrag_cmd), "--host", "0.0.0.0", "--port", "9621"]
     elif os.getenv("RENDER"):
-        # On Render, use lightrag-server from PATH (installed via requirements.txt)
-        lightrag_cmd = "lightrag-server"
+        # On Render, run the API server directly with Python
+        # Add LightRAG directory to Python path so imports work
+        lightrag_api_script = LIGHTRAG_DIR / "lightrag" / "api" / "lightrag_server.py"
+        if not lightrag_api_script.exists():
+            print_error(f"LightRAG API script not found at {lightrag_api_script}")
+            return None
+        
+        # Use Python to run uvicorn with the app from the script
+        lightrag_cmd = [
+            sys.executable, "-c",
+            f"import sys; sys.path.insert(0, '{LIGHTRAG_DIR}'); "
+            "from lightrag.api.lightrag_server import app; "
+            "import uvicorn; "
+            "uvicorn.run(app, host='0.0.0.0', port=9621)"
+        ]
     else:
         print_error(f"lightrag-server not found. Please run: cd lightrag/Lightrag_main && uv sync --extra api")
         return None
     
     with open(log_file, 'w') as log_out, open(error_file, 'w') as log_err:
         process = subprocess.Popen(
-            [lightrag_cmd,
-             "--host", "0.0.0.0", 
-             "--port", "9621"],
+            lightrag_cmd,
             stdout=log_out,
             stderr=log_err,
             env=env,
