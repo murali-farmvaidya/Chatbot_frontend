@@ -228,17 +228,31 @@ def start_lightrag():
     env = os.environ.copy()
     env['PYTHONIOENCODING'] = 'utf-8'
     
+    # On Render, unset Gunicorn-related variables that confuse LightRAG
+    if os.getenv("RENDER"):
+        for key in list(env.keys()):
+            if 'GUNICORN' in key or key == 'WEB_CONCURRENCY':
+                env.pop(key, None)
+        print_info("Removed Gunicorn env vars to avoid conflicts")
+    
     # Create log files for debugging
     log_file = LIGHTRAG_DIR / "lightrag_startup.log"
     error_file = LIGHTRAG_DIR / "lightrag_error.log"
     
-    # Start with log files to capture startup errors
+    # Use uvicorn directly to start LightRAG API
+    # This is more reliable than lightrag-server which has Gunicorn issues
+    print_info("Starting LightRAG with uvicorn")
     with open(log_file, 'w') as log_out, open(error_file, 'w') as log_err:
         process = subprocess.Popen(
-            [str(lightrag_cmd)],
+            [str(venv_python), "-m", "uvicorn", 
+             "lightrag.api.lightrag_server:app",
+             "--host", "0.0.0.0", 
+             "--port", "9621",
+             "--log-level", "info"],
             stdout=log_out,
             stderr=log_err,
-            env=env
+            env=env,
+            cwd=str(LIGHTRAG_DIR)
         )
     
     processes.append(process)
