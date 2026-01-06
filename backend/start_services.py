@@ -181,6 +181,10 @@ def start_lightrag():
                 subprocess.run(["pip", "install", "uv"], check=True)
                 subprocess.run(["uv", "sync", "--extra", "api", "--no-cache"], check=True)
                 print_success("LightRAG dependencies installed")
+                # Re-check if command exists now
+                if not lightrag_cmd.exists():
+                    print_error("lightrag-server command still not found after installation")
+                    sys.exit(1)
             except Exception as e:
                 print_error(f"Failed to install dependencies: {e}")
                 sys.exit(1)
@@ -195,16 +199,38 @@ def start_lightrag():
     env = os.environ.copy()
     env['PYTHONIOENCODING'] = 'utf-8'
     
-    # Start with direct output to avoid buffering issues during document processing
-    process = subprocess.Popen(
-        [str(lightrag_cmd)],
-        stdout=None,  # Direct output to terminal (no buffering)
-        stderr=None,  # Direct error output to terminal
-        env=env
-    )
+    # Create log files for debugging
+    log_file = LIGHTRAG_DIR / "lightrag_startup.log"
+    error_file = LIGHTRAG_DIR / "lightrag_error.log"
+    
+    # Start with log files to capture startup errors
+    with open(log_file, 'w') as log_out, open(error_file, 'w') as log_err:
+        process = subprocess.Popen(
+            [str(lightrag_cmd)],
+            stdout=log_out,
+            stderr=log_err,
+            env=env
+        )
     
     processes.append(process)
     print_success(f"LightRAG server started (PID: {process.pid})")
+    print_info(f"LightRAG logs: {log_file}")
+    
+    # Check if process is still alive after a moment
+    time.sleep(2)
+    if process.poll() is not None:
+        print_error("LightRAG failed to start! Check logs:")
+        print_error(f"  Log: {log_file}")
+        print_error(f"  Error: {error_file}")
+        # Print error contents
+        try:
+            with open(error_file, 'r') as f:
+                error_content = f.read()
+                if error_content:
+                    print_error(f"Error output:\n{error_content}")
+        except:
+            pass
+        sys.exit(1)
     
     # Go back to backend directory
     os.chdir(BACKEND_DIR)
@@ -258,6 +284,15 @@ def start_backend():
 def main():
     """Main function"""
     print_header("Starting Farm Vaidya Services")
+    
+    # Validate required environment variables on Render
+    if os.getenv("RENDER"):
+        required_vars = ["GEMINI_API_KEY", "MONGODB_URI", "JWT_SECRET"]
+        missing = [var for var in required_vars if not os.getenv(var)]
+        if missing:
+            print_error(f"Missing required environment variables: {', '.join(missing)}")
+            print_error("Please set these in Render's Environment tab")
+            sys.exit(1)
     
     # On Render, skip port checks (Render manages ports)
     if not os.getenv("RENDER"):
