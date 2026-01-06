@@ -239,16 +239,24 @@ def start_lightrag():
     log_file = LIGHTRAG_DIR / "lightrag_startup.log"
     error_file = LIGHTRAG_DIR / "lightrag_error.log"
     
-    # Use lightrag-server command
+    # Determine which command to use
     print_info("Starting LightRAG server")
     
-    # Determine command based on environment
-    if os.getenv("RENDER"):
-        # On Render, lightrag-server should be in PATH from requirements.txt
+    # Check if .venv exists (local development)
+    if IS_WINDOWS:
+        venv_lightrag_cmd = LIGHTRAG_DIR / ".venv" / "Scripts" / "lightrag-server.exe"
+    else:
+        venv_lightrag_cmd = LIGHTRAG_DIR / ".venv" / "bin" / "lightrag-server"
+    
+    if venv_lightrag_cmd.exists():
+        # Use venv's lightrag-server (local)
+        lightrag_cmd = str(venv_lightrag_cmd)
+    elif os.getenv("RENDER"):
+        # On Render, use lightrag-server from PATH (installed via requirements.txt)
         lightrag_cmd = "lightrag-server"
     else:
-        # On local, check for lightrag-server command
-        lightrag_cmd = "lightrag-server"
+        print_error(f"lightrag-server not found. Please run: cd lightrag/Lightrag_main && uv sync --extra api")
+        return None
     
     with open(log_file, 'w') as log_out, open(error_file, 'w') as log_err:
         process = subprocess.Popen(
