@@ -248,7 +248,7 @@ def start_lightrag():
              "lightrag.api.lightrag_server:app",
              "--host", "0.0.0.0", 
              "--port", "9621",
-             "--log-level", "INFO"],  # Uppercase required
+             "--log-level", "info"],  # Lowercase for uvicorn
             stdout=log_out,
             stderr=log_err,
             env=env,
