@@ -40,20 +40,20 @@ def generate_followup(session_id: str, language: str = "english") -> str:
         session_id: The session ID
         language: The detected language of the user's question
     """
-    # Deterministic follow-up sequence to avoid noisy/irrelevant questions
+    # Generic follow-up sequence for ANY crop (not hardcoded to coconut)
     followup_sequences = {
         "telugu": [
-            "మీ కొబ్బరి చెట్ల పెరుగుదల దశ (ఆరంభం/మధ్య/కోలేక) ఏమిటి?",
-            "మీ నేల రకం (ఎర్ర, నల్ల, లోమీ) మరియు నీటిపారుదల విధానం (డ్రిప్/స్ప్రింక్లర్/ఎద్దులు) ఏమిటి?",
+            "మీ పంట పేరు మరియు పెరుగుదల దశ (ప్రారంభం/మధ్య/పండిన తర్వాత) ఏమిటి?",
+            "మీ నేల రకం (ఎర్ర/నల్ల/లోమీ) మరియు నీటిపారుదల విధానం (డ్రిప్/స్ప్రింక్లర్/వరద) ఏమిటి?",
             "ఇప్పటివరకు ఏ ఎరువులు లేదా మందులు వాడారా? ఉంటే పేర్లు/మోతాదులు చెప్పండి."
         ],
         "hindi": [
-            "आपकी नारियल की पेड़ों का विकास चरण (शुरुआत/मध्य/कटाई के पास) क्या है?",
-            "आपकी मिट्टी का प्रकार (काली/लाल/दोमट) और सिंचाई विधि (ड्रिप/स्प्रिंकलर/बाढ़) क्या है?",
+            "आपकी फसल का नाम और विकास चरण (शुरुआत/मध्य/कटाई के पास) क्या है?",
+            "आपकी मिट्टी का प्रकार (लाल/काली/दोमट) और सिंचाई विधि (ड्रिप/स्प्रिंकलर/बाढ़) क्या है?",
             "अब तक कौन-कौन से उर्वरक या दवाइयाँ इस्तेमाल की हैं? नाम/मात्रा बताएं।"
         ],
         "english": [
-            "What is the growth stage of your coconut trees (early/mid/near harvest)?",
+            "What is your crop name and growth stage (early/mid/near harvest)?",
             "What is your soil type (red/black/loam) and irrigation method (drip/sprinkler/flood)?",
             "What fertilizers or sprays have you already used? Please mention names and doses."
         ]

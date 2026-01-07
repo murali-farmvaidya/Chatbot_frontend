@@ -216,12 +216,12 @@ def handle_chat(session_id, user_message):
         ans3 = user_messages[3]["content"] if len(user_messages) > 3 else "Not provided"
         
         # Build comprehensive query with ALL context
-        comprehensive_query = f"""COCONUT YIELD PROBLEM DIAGNOSIS
+        comprehensive_query = f"""CROP PROBLEM DIAGNOSIS
 
 Farmer's problem: {user_message}
 
 Farmer provided the following information:
-- Crop growth stage: {ans1}
+- Crop name and growth stage: {ans1}
 - Soil type and irrigation method: {ans2}
 - Fertilizers and sprays already used: {ans3}
 
@@ -257,7 +257,7 @@ Be specific with product names, doses (kg/liters), timing (months), and applicat
                 print("✅ Generated answer using local knowledge base")
             except Exception as e:
                 print(f"❌ Error in local knowledge base: {e}")
-                answer = f"Based on your coconut yield problem with {growth_stage}-stage coconut in {soil_type} soil with {irrigation} irrigation: Please consult our detailed guides or contact local agricultural experts for comprehensive fertilizer and irrigation recommendations."
+                answer = f"Based on your {growth_stage}-stage crop in {soil_type} soil with {irrigation} irrigation: Please consult our detailed guides or contact local agricultural experts for comprehensive fertilizer and irrigation recommendations."
     else:
         answer = clean_response(query_lightrag(user_message, history, language=detected_language))
     
