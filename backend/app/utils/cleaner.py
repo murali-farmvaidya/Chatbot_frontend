@@ -29,8 +29,9 @@ def clean_response(text):
     text = re.sub(r"\[\d+\]", "", text)
     
     # Remove markdown bold/italic markers
-    text = re.sub(r"\*\*", "", text)  # Remove **
-    text = re.sub(r"__", "", text)    # Remove __
+    text = re.sub(r"\*\*", "", text)  # Remove ** (bold)
+    text = re.sub(r"__", "", text)    # Remove __ (bold)
+    text = re.sub(r"(?<!\*)\*(?!\*)", "", text)  # Remove single * (italic) but not **
     
     # Remove bullet point asterisks at line start and replace with proper bullets
     text = re.sub(r"^\*\s+", "• ", text, flags=re.MULTILINE)
