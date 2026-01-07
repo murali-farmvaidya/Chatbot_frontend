@@ -149,11 +149,11 @@ def handle_chat(session_id, user_message):
         print(f"⚠️ Session {session_id} not found in database")
         session = {}
 
-    # 🚫 DOSAGE → direct answer always
+    # 🚫 DOSAGE → direct answer always (no history to avoid language contamination)
     if is_dosage_question(user_message):
         print("✅ DOSAGE BRANCH RETURNING LIGHTRAG ANSWER")
-        history = get_history(session_id)[:-1]
-        answer = clean_response(query_lightrag(user_message, history, language=detected_language))
+        # Don't pass history - prevents language contamination from previous messages
+        answer = clean_response(query_lightrag(user_message, [], language=detected_language))
         messages.insert_one(message_doc(session_id, "assistant", answer))
         return answer
 
@@ -166,17 +166,27 @@ def handle_chat(session_id, user_message):
         messages.insert_one(message_doc(session_id, "assistant", answer))
         return answer
 
-    # 📚 DIRECT PRODUCT / KNOWLEDGE → answer directly
+    # 📚 DIRECT PRODUCT / KNOWLEDGE → answer directly (no history to avoid language contamination)
     if is_direct_knowledge_question(user_message):
         print("✅ DIRECT KNOWLEDGE QUESTION")
-        history = get_history(session_id)[:-1]
-        answer = clean_response(query_lightrag(user_message, history, language=detected_language))
+        # Don't pass history - prevents language contamination from previous messages
+        answer = clean_response(query_lightrag(user_message, [], language=detected_language))
         messages.insert_one(message_doc(session_id, "assistant", answer))
         return answer
 
     # 🔁 FOLLOW-UP LOGIC FOR PROBLEM DIAGNOSIS
     # Always ask follow-ups for diagnosis until we have enough context (language-agnostic)
     if is_problem_diagnosis_question(user_message) or session.get("awaiting_followup"):
+        # If this is a NEW problem diagnosis question and we're not already in follow-up mode,
+        # reset the follow-up state (user asking a new question after previous conversation)
+        if is_problem_diagnosis_question(user_message) and not session.get("awaiting_followup"):
+            sessions.update_one(
+                {"_id": ObjectId(session_id)},
+                {"$set": {"followup_count": 0, "awaiting_followup": False}}
+            )
+            session["followup_count"] = 0
+            session["awaiting_followup"] = False
+        
         # Default followup counter to 0 if missing
         if session.get("followup_count") is None:
             session["followup_count"] = 0
