@@ -1,10 +1,11 @@
 import requests
 from app.core.config import LIGHTRAG_URL
 from deep_translator import GoogleTranslator
+from app.utils.domain_translator import translate_to_english, translate_to_telugu
 
 def query_lightrag(query, history, mode="mix", language="english", factual=False):
     """
-    Query LightRAG with language awareness
+    Query LightRAG with language awareness and domain-specific term translation
     
     Args:
         query: The user's question
@@ -14,16 +15,19 @@ def query_lightrag(query, history, mode="mix", language="english", factual=False
         factual: If True, use softer language instruction to avoid forcing wrong answers
     """
     
-    # Translate non-English queries to English for LightRAG search
-    english_query = query
+    # Step 1: Translate domain-specific Telugu terms to English for better LLM understanding
+    query_with_english_terms = translate_to_english(query)
+    
+    # Step 2: Translate non-English queries to English for LightRAG search
+    english_query = query_with_english_terms
     if language != "english":
         try:
             translator = GoogleTranslator(source='auto', target='en')
-            english_query = translator.translate(query)
-            print(f"🔄 Translated query: {query} → {english_query}")
+            english_query = translator.translate(query_with_english_terms)
+            print(f"🔄 Translated query: {query_with_english_terms} → {english_query}")
         except Exception as e:
             print(f"⚠️ Translation failed: {e}, using original query")
-            english_query = query
+            english_query = query_with_english_terms
     
     # Query LightRAG with English query (no language instruction appended)
     payload = {
@@ -36,8 +40,11 @@ def query_lightrag(query, history, mode="mix", language="english", factual=False
     res = requests.post(LIGHTRAG_URL, json=payload, timeout=60)
     english_response = res.json().get("response", "")
     
-    # If language is not English, translate the response
-    if language != "english" and english_response and "[no-context]" not in english_response.lower():
+    # Step 3: Translate domain-specific English terms back to Telugu in response (if Telugu conversation)
+    response_with_telugu_terms = translate_to_telugu(english_response, language)
+    
+    # Step 4: If language is not English, translate the entire response
+    if language != "english" and response_with_telugu_terms and "[no-context]" not in response_with_telugu_terms.lower():
         try:
             # Map language codes to translator codes
             lang_code_map = {
@@ -55,12 +62,12 @@ def query_lightrag(query, history, mode="mix", language="english", factual=False
             
             target_lang = lang_code_map.get(language, "en")
             translator = GoogleTranslator(source='en', target=target_lang)
-            translated_response = translator.translate(english_response)
+            translated_response = translator.translate(response_with_telugu_terms)
             print(f"🌐 Response translated from English to {language}")
             return translated_response
         except Exception as e:
-            print(f"⚠️ Translation of response failed: {e}, returning English response")
-            return english_response
+            print(f"⚠️ Translation of response failed: {e}, returning response with Telugu terms")
+            return response_with_telugu_terms
     
-    return english_response
+    return response_with_telugu_terms
 

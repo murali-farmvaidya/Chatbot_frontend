@@ -69,3 +69,6 @@ desktop.ini
 *.tmp
 *.temp
 .cache/
+
+#dictionary
+dict.txt

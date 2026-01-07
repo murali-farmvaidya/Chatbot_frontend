@@ -1,5 +1,6 @@
 from bson import ObjectId
 from datetime import datetime
+import time
 from app.db.mongo import messages, sessions
 from app.models.message import message_doc
 from app.services.lightrag_service import query_lightrag
@@ -106,13 +107,17 @@ def handle_greeting(user_message, language):
 
 def handle_chat(session_id, user_message):
     print("🔥 NEW HANDLE_CHAT EXECUTED")
+    start_time = time.time()
     
     # Detect language of user's message
+    t1 = time.time()
     detected_language = detect_language(user_message)
-    print(f"🌍 Detected language: {detected_language}")
+    print(f"🌍 Detected language: {detected_language} (took {time.time()-t1:.2f}s)")
     
     # Save user message
+    t2 = time.time()
     messages.insert_one(message_doc(session_id, "user", user_message))
+    print(f"💾 Saved user message (took {time.time()-t2:.2f}s)")
 
     # Update session timestamp and language
     sessions.update_one(
@@ -141,6 +146,7 @@ def handle_chat(session_id, user_message):
         print("✅ GREETING/ACKNOWLEDGMENT DETECTED")
         answer = handle_greeting(user_message, detected_language)
         messages.insert_one(message_doc(session_id, "assistant", answer))
+        print(f"⏱️ Total time: {time.time()-start_time:.2f}s")
         return answer
 
     # Fetch session data early for all subsequent logic
@@ -153,9 +159,12 @@ def handle_chat(session_id, user_message):
     # 🚫 DOSAGE → direct answer always (no history to avoid language contamination)
     if is_dosage_question(user_message):
         print("✅ DOSAGE BRANCH RETURNING LIGHTRAG ANSWER")
+        t3 = time.time()
         # Don't pass history - prevents language contamination from previous messages
         answer = clean_response(query_lightrag(user_message, [], language=detected_language))
+        print(f"🤖 LightRAG query (took {time.time()-t3:.2f}s)")
         messages.insert_one(message_doc(session_id, "assistant", answer))
+        print(f"⏱️ Total time: {time.time()-start_time:.2f}s")
         return answer
 
     # 📊 FACTUAL / COMPANY QUESTIONS → NEVER FOLLOW-UP, NO HISTORY
@@ -163,20 +172,27 @@ def handle_chat(session_id, user_message):
     # Use factual=True to avoid forcing answers when no information exists
     if is_factual_company_question(user_message):
         print("✅ FACTUAL/COMPANY QUESTION - DIRECT ANSWER (NO HISTORY)")
+        t3 = time.time()
         answer = clean_response(query_lightrag(user_message, [], language=detected_language, factual=True))
+        print(f"🤖 LightRAG query (took {time.time()-t3:.2f}s)")
         messages.insert_one(message_doc(session_id, "assistant", answer))
+        print(f"⏱️ Total time: {time.time()-start_time:.2f}s")
         return answer
 
     # 📚 DIRECT PRODUCT / KNOWLEDGE → answer directly (no history to avoid language contamination)
     if is_direct_knowledge_question(user_message):
         print("✅ DIRECT KNOWLEDGE QUESTION")
+        t3 = time.time()
         # Don't pass history - prevents language contamination from previous messages
         answer = clean_response(query_lightrag(user_message, [], language=detected_language))
+        print(f"🤖 LightRAG query (took {time.time()-t3:.2f}s)")
         messages.insert_one(message_doc(session_id, "assistant", answer))
+        print(f"⏱️ Total time: {time.time()-start_time:.2f}s")
         return answer
 
     # 🔁 FOLLOW-UP LOGIC FOR PROBLEM DIAGNOSIS
     # Always ask follow-ups for diagnosis until we have enough context (language-agnostic)
+    t_followup = time.time()
     if is_problem_diagnosis_question(user_message) or session.get("awaiting_followup"):
         # If this is a NEW problem diagnosis question and we're not already in follow-up mode,
         # reset the follow-up state (user asking a new question after previous conversation)
@@ -186,8 +202,10 @@ def handle_chat(session_id, user_message):
             from app.services.followup_service import extract_provided_info
             
             # Check both current message AND recent history (last 10 messages to capture recent context)
+            t_hist = time.time()
             recent_history = get_history(session_id)[-10:]  # Last 10 messages
             provided = extract_provided_info(recent_history)
+            print(f"🔍 Extracted provided info (took {time.time()-t_hist:.2f}s)")
             
             # If user provided crop+stage AND soil info, skip follow-ups
             has_crop_info = provided["crop_provided"] and provided["stage_provided"]
@@ -234,7 +252,9 @@ def handle_chat(session_id, user_message):
 
         if not can_finalize(session):
             print("✅ GENERATING FOLLOW-UP QUESTION")
+            t_gen = time.time()
             followup_q = generate_followup(session_id, detected_language, user_message)
+            print(f"❓ Generated follow-up (took {time.time()-t_gen:.2f}s)")
             
             # If generate_followup returns None, it means all info is collected
             if followup_q is None:
@@ -333,7 +353,9 @@ Be specific with product names, doses (kg/liters), timing (months), and applicat
         print(f"📝 Final Query to LightRAG: {comprehensive_query}")
         
         # Try LightRAG first
+        t_rag = time.time()
         answer = clean_response(query_lightrag(comprehensive_query, [], language=detected_language))
+        print(f"🤖 LightRAG final answer (took {time.time()-t_rag:.2f}s)")
         
         # If LightRAG returns [no-context] or empty, use local knowledge base
         if "[no-context]" in answer or not answer or answer.strip() == "":
@@ -346,14 +368,20 @@ Be specific with product names, doses (kg/liters), timing (months), and applicat
             
             try:
                 # Use local knowledge base
+                t_synth = time.time()
                 answer = synthesize_answer(soil_type, growth_stage, irrigation, ans3)
-                print("✅ Generated answer using local knowledge base")
+                print(f"✅ Generated answer using local knowledge base (took {time.time()-t_synth:.2f}s)")
             except Exception as e:
                 print(f"❌ Error in local knowledge base: {e}")
                 answer = f"Based on your {growth_stage}-stage crop in {soil_type} soil with {irrigation} irrigation: Please consult our detailed guides or contact local agricultural experts for comprehensive fertilizer and irrigation recommendations."
     else:
         # Not a diagnosis question or no follow-ups collected, just use direct query with history
+        t_direct = time.time()
         answer = clean_response(query_lightrag(user_message, history, language=detected_language))
+        print(f"🤖 Direct LightRAG query (took {time.time()-t_direct:.2f}s)")
     
+    t_final_save = time.time()
     messages.insert_one(message_doc(session_id, "assistant", answer))
+    print(f"💾 Final save (took {time.time()-t_final_save:.2f}s)")
+    print(f"⏱️ Total handle_chat time: {time.time()-start_time:.2f}s")
     return answer
