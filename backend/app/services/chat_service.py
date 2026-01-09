@@ -466,10 +466,21 @@ Be specific with product names, doses (kg/liters), timing (months), and applicat
                 answer = f"Based on your {growth_stage}-stage crop in {soil_type} soil with {irrigation} irrigation: Please consult our detailed guides or contact local agricultural experts for comprehensive fertilizer and irrigation recommendations."
                 answer = ensure_language_match(answer, detected_language)
     else:
-        # Not a diagnosis question or no follow-ups collected, just use direct query WITHOUT history
-        # History can contaminate language or context; for factual/knowledge use fresh query
+        # Not a diagnosis question or no follow-ups collected
+        # Build a user-only context to avoid language contamination from assistant messages
         t_direct = time.time()
-        answer = clean_response(query_lightrag(user_message, [], language=detected_language))
+        recent_history = get_history(session_id)[-6:]
+        user_context = [m["content"] for m in recent_history if m["role"] == "user"]
+        context_block = " \n".join(user_context)
+        comprehensive_query = (
+            "You are an agronomy assistant. Use the provided user context and question. "
+            "If the context already has enough details, give a direct, concise answer. "
+            "If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. "
+            "Never repeat follow-ups already asked.\n\n"
+            f"Context:\n{context_block}\n\nQuestion:\n{user_message}\n\nAnswer:"
+        )
+
+        answer = clean_response(query_lightrag(comprehensive_query, [], language=detected_language))
         answer = ensure_language_match(answer, detected_language)
         print(f"🤖 Direct LightRAG query (took {time.time()-t_direct:.2f}s)")
     
