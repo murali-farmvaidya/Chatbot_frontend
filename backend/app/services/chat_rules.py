@@ -244,3 +244,44 @@ def is_problem_diagnosis_question(text: str) -> bool:
     t = text.lower()
     return any(k in t for k in problem_keywords)
 
+
+# ---------------- SUMMARY & LIST QUESTIONS ----------------
+def is_summary_or_list_question(text: str) -> bool:
+    """
+    Detect questions asking for summaries, lists, or recaps of previously discussed information.
+    These should compile from conversation history rather than sending to LightRAG.
+    """
+    if not text or len(text.strip()) == 0:
+        return False
+    
+    t = text.lower()
+    original = text
+    
+    # English summary keywords
+    summary_keywords = [
+        "tell me all", "list all", "recap", "summary", "summarize",
+        "all dosages", "all products", "all information",
+        "until now", "so far", "discussed", "mention", "mentioned",
+        "what we discussed", "everything about", "all about",
+        "complete list", "full list", "entire list"
+    ]
+    
+    # Telugu summary keywords
+    telugu_keywords = [
+        "అన్ని", "చెప్పు", "జాబితా", "ఇప్పటిదాకా", "చర్చించిన",
+        "సారాంశం", "సమాచారం", "మోతాదులు", "ఉత్పత్తులు"
+    ]
+    
+    # Hindi summary keywords
+    hindi_keywords = [
+        "सभी", "सूची", "सारांश", "अब तक", "जानकारी", "खुराक",
+        "उत्पाद", "बताइए", "सबको", "चर्चा"
+    ]
+    
+    all_keywords = summary_keywords + telugu_keywords + hindi_keywords
+    
+    # Check if any keyword matches
+    match_count = sum(1 for k in all_keywords if k in t or k in original)
+    
+    return match_count >= 1
+

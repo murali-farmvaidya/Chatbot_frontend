@@ -638,5 +638,401 @@
     "create_time": 1767933713,
     "update_time": 1767933713,
     "_id": "global:keywords:2349572fa49809da8420bc2ebb069b9e"
+  },
+  "mix:keywords:620f81994c4d46c07f9d19e959517177": {
+    "return": "{\"high_level_keywords\": [\"Dosage information\", \"Conversation summary\"], \"low_level_keywords\": [\"Liters\", \"Previous questions\", \"Discussed dosages\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "User's previous questions and context: Tell me all dosages until now we have discussed, how many liters should you use? Yes, I want the dosages of this until discussed now only, not everything. summarize the converation\nNow answer: summarize the converation",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767940797,
+    "update_time": 1767940797,
+    "_id": "mix:keywords:620f81994c4d46c07f9d19e959517177"
+  },
+  "mix:query:32124db713248c4f32224f57326f9c3e": {
+    "return": "We have discussed dosages for the following products:\n\n*   Aadhaar Gold: 4 kg/acre\n*   Agriseal: 500 ml/acre or 1 L/acre\n*   BOC: 5 L/acre\n*   DFUSE: 5 ml/L water\n*   DFNDR: 5 ml/L water\n*   Green Bag (NUTRI4): 50 kg/acre\n*   INM Chakra: 5 litres per acre\n*   Invictus: 10 kg/acre\n*   Native Neem 300 ppm: 5 ml/liter water\n*   Native Neem 10000 ppm: 1 ml/liter water\n*   NUTRI6 / Formula 6: 500 ml/acre (or 1.5 ml/liter of water for a different formulation)\n*   Poshak Level-1: 1 L/acre\n*   PROCEED – Biotic & Abiotic Stress Relieve: 500 ml/acre\n*   TRAICORE EC 0.05%: 1 ml/L water\n*   TRAICORE EW 0.1%: 1 ml/L water\n*   5.0.6 COPSE: 500 gm/acre\n*   5.0.7 BSL4Agri: 1 L/acre\n\nAdditionally, for drip irrigation, a dosage of 2.5–4.0 L/acre is mentioned for FLOWMIN.\n\n### References\n\n*   [1] Biofactor knowledge base 21112025.pdf",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "User's previous questions and context: Tell me all dosages until now we have discussed, how many liters should you use? Yes, I want the dosages of this until discussed now only, not everything. summarize the converation\nNow answer: summarize the converation",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Dosage information, Conversation summary",
+      "ll_keywords": "Liters, Previous questions, Discussed dosages",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767940803,
+    "update_time": 1767940803,
+    "_id": "mix:query:32124db713248c4f32224f57326f9c3e"
+  },
+  "naive:query:72eb24e209353f67012c121df03b37da": {
+    "return": "మీరు కోరిన సమాచారం నా దగ్గర లేదు. Invictus ని ఎకరానికి ఎంత వాడాలో ఖచ్చితమైన మోతాదు నాకు తెలియదు.",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "Can I use fifty liters of fifty kg of Invictus in a five acre field or can I use twenty kg of Invictus in twenty acres or five acres of Invictus?",
+    "queryparam": {
+      "mode": "naive",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767941262,
+    "update_time": 1767941262,
+    "_id": "naive:query:72eb24e209353f67012c121df03b37da"
+  },
+  "global:keywords:ce5da147a640ed75c9e21fd1d632e9ec": {
+    "return": "{\"high_level_keywords\": [\"Product usage\", \"Agricultural application\", \"Dosage calculation\"], \"low_level_keywords\": [\"Invictus\", \"50 liters\", \"50 kg\", \"5 acres\", \"70 acres\", \"70 kg\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "నేను యాభై లీటర్లు యాభై కేజీల ఇన్విక్టస్ని ఐదు ఎకరాల పొలంలో వాడొచ్చా లేకపోతే డబ్బై ఎకరాల్లో డబ్బై కిలోలలో వాడొచ్చా ఐదు ఎకరాల్లోని ఇన్విక్టస్ని",
+    "queryparam": {
+      "mode": "global",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767941300,
+    "update_time": 1767941300,
+    "_id": "global:keywords:ce5da147a640ed75c9e21fd1d632e9ec"
+  },
+  "mix:keywords:a1a029ff2a69038fe2dbc107ac279390": {
+    "return": "{\"high_level_keywords\": [\"Agronomy\", \"Fertilizer application\", \"Field size\"], \"low_level_keywords\": [\"Invictus\", \"50 kg\", \"5 acres\", \"20 kg\", \"80 kg\", \"90 kg\", \"inverters\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nCan I use fifty liters of fifty kg of Invictus in a five acre field or can I use twenty kg of Invictus in twenty acres or five acres of Invictus? \nI can use fifty kg inverters in a five acre farm what if eighty ninety kg inverters are used in a five acre farm?\n\nQuestion:\nI can use fifty kg inverters in a five acre farm what if eighty ninety kg inverters are used in a five acre farm?\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767941363,
+    "update_time": 1767941363,
+    "_id": "mix:keywords:a1a029ff2a69038fe2dbc107ac279390"
+  },
+  "mix:query:5d31f1b461cb5b7141017511c855485f": {
+    "return": "Fifty kilograms of Invictus can be used in a five-acre farm. If eighty to ninety kilograms of Invictus are used in a five-acre farm, it might lead to issues as Invictus is typically applied at a rate of 10 kg per acre.\n\n### References\n\n* [1] Biofactor knowledge base 21112025.pdf",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nCan I use fifty liters of fifty kg of Invictus in a five acre field or can I use twenty kg of Invictus in twenty acres or five acres of Invictus? \nI can use fifty kg inverters in a five acre farm what if eighty ninety kg inverters are used in a five acre farm?\n\nQuestion:\nI can use fifty kg inverters in a five acre farm what if eighty ninety kg inverters are used in a five acre farm?\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Agronomy, Fertilizer application, Field size",
+      "ll_keywords": "Invictus, 50 kg, 5 acres, 20 kg, 80 kg, 90 kg, inverters",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767941366,
+    "update_time": 1767941366,
+    "_id": "mix:query:5d31f1b461cb5b7141017511c855485f"
+  },
+  "global:keywords:457cb2b0374c87b324ac6513403620d9": {
+    "return": "{\"high_level_keywords\": [\"Inverter usage\", \"Agricultural land\", \"Weight capacity impact\", \"Crop yield\"], \"low_level_keywords\": [\"50 kg inverters\", \"80-90 kg inverters\", \"Five acres of land\", \"Farm management\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "నేను యాభై కేజీల ఇన్వెర్టర్స్ ఐదు ఎకరాల పొలంలో వాడొచ్చు ఒకవేళ ఎనభై తొంభై కేజీల ఇన్వెర్టర్స్ ఐదు ఎకరాల పొలంలో వాడితే ఏమవుతది",
+    "queryparam": {
+      "mode": "global",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767941401,
+    "update_time": 1767941401,
+    "_id": "global:keywords:457cb2b0374c87b324ac6513403620d9"
+  },
+  "mix:keywords:bf7277c1cf4c2c238b70f9fe6f00f1b3": {
+    "return": "{\"high_level_keywords\": [\"Agronomy assistant\", \"Crop yield\", \"Planting advice\"], \"low_level_keywords\": [\"Rice\", \"Early stages\", \"Red soil\", \"Drip irrigation\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nMy crop is not yielding much, what should I do? \nI am growing rice which is still in its early stages. \nI am using red soil and using drip irrigation\n\nQuestion:\nI am using red soil and using drip irrigation\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767941947,
+    "update_time": 1767941947,
+    "_id": "mix:keywords:bf7277c1cf4c2c238b70f9fe6f00f1b3"
+  },
+  "mix:query:1e9a01fbde70467747126913a246faa0": {
+    "return": "To help improve your rice yield, I need a little more information. Could you please tell me the specific stage of your rice crop's early growth, such as 10-15 days after sowing or the vegetative stage?",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nMy crop is not yielding much, what should I do? \nI am growing rice which is still in its early stages. \nI am using red soil and using drip irrigation\n\nQuestion:\nI am using red soil and using drip irrigation\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Agronomy assistant, Crop yield, Planting advice",
+      "ll_keywords": "Rice, Early stages, Red soil, Drip irrigation",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767941949,
+    "update_time": 1767941949,
+    "_id": "mix:query:1e9a01fbde70467747126913a246faa0"
+  },
+  "mix:keywords:4a32ca80d6a66d1a1dd26c9f2d15db08": {
+    "return": "{\"high_level_keywords\": [\"Agronomy\", \"Crop cultivation\", \"Fertilizer recommendation\", \"Soil management\"], \"low_level_keywords\": [\"Rice crop\", \"Red soil\", \"Drip irrigation\", \"High phosphorus\", \"Product selection\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nనేను వరిపంట పండిస్తున్నాను అది ఇంకా ప్రారంభ దశలో ఉంది. \nనేను ఎర్ర నేల ఉపయోగిస్తున్నాను మరియు డ్రిప్ ఇరిగేషన్ వాడుతున్నాను \nMy soil test shows high phosphorus. Which product should I use\n\nQuestion:\nMy soil test shows high phosphorus. Which product should I use\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942021,
+    "update_time": 1767942021,
+    "_id": "mix:keywords:4a32ca80d6a66d1a1dd26c9f2d15db08"
+  },
+  "mix:query:a8c7c16bc16ac21e9b09cfc9e3ecb3f2": {
+    "return": "మీ నేలలో ఫాస్ఫరస్ ఎక్కువగా ఉన్నందున, మీరు NPK ఎరువులు వాడటం తగ్గించాలి. వరి పంటకు, ప్రారంభ దశలో, మీరు నత్రజని, పొటాష్ మరియు సూక్ష్మపోషకాలను అందించే ఎరువును వాడవచ్చు. మీ నేల పరీక్షలో ఫాస్ఫరస్ ఎక్కువగా ఉందని గమనించాం. మీ నేలలోని ఫాస్ఫరస్ స్థాయిని బట్టి, మీరు నత్రజని మరియు పొటాష్‌ను అందించే ఎరువును వాడాలి.\n\nమీరు వరి పంటలో వాడటానికి ఎటువంటి ఎరువును సూచిస్తున్నారు?",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nనేను వరిపంట పండిస్తున్నాను అది ఇంకా ప్రారంభ దశలో ఉంది. \nనేను ఎర్ర నేల ఉపయోగిస్తున్నాను మరియు డ్రిప్ ఇరిగేషన్ వాడుతున్నాను \nMy soil test shows high phosphorus. Which product should I use\n\nQuestion:\nMy soil test shows high phosphorus. Which product should I use\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Agronomy, Crop cultivation, Fertilizer recommendation, Soil management",
+      "ll_keywords": "Rice crop, Red soil, Drip irrigation, High phosphorus, Product selection",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942024,
+    "update_time": 1767942024,
+    "_id": "mix:query:a8c7c16bc16ac21e9b09cfc9e3ecb3f2"
+  },
+  "mix:keywords:97c2bb3636975307c0e1a5fb80666a5c": {
+    "return": "{\"high_level_keywords\": [\"Agronomy assistant\", \"User context\", \"Direct answer\", \"Follow-up question\"], \"low_level_keywords\": [\"Red soil\", \"Drip irrigation\", \"High phosphorus\", \"Soil test\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nనేను ఎర్ర నేల ఉపయోగిస్తున్నాను మరియు డ్రిప్ ఇరిగేషన్ వాడుతున్నాను \nMy soil test shows high phosphorus. Which product should I use \nyes\n\nQuestion:\nyes\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942051,
+    "update_time": 1767942051,
+    "_id": "mix:keywords:97c2bb3636975307c0e1a5fb80666a5c"
+  },
+  "mix:query:4b9e92d38ba3136d070ef99ccf3f305d": {
+    "return": "మీరు ఎర్ర నేల మరియు డ్రిప్ ఇరిగేషన్ ఉపయోగిస్తున్నారు, మీ నేల పరీక్షలో ఫాస్పరస్ ఎక్కువగా ఉందని తెలిసింది. ఈ పరిస్థితులలో, మీరు ఏ ఉత్పత్తిని ఉపయోగించాలనుకుంటున్నారు?",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nనేను ఎర్ర నేల ఉపయోగిస్తున్నాను మరియు డ్రిప్ ఇరిగేషన్ వాడుతున్నాను \nMy soil test shows high phosphorus. Which product should I use \nyes\n\nQuestion:\nyes\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Agronomy assistant, User context, Direct answer, Follow-up question",
+      "ll_keywords": "Red soil, Drip irrigation, High phosphorus, Soil test",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942054,
+    "update_time": 1767942054,
+    "_id": "mix:query:4b9e92d38ba3136d070ef99ccf3f305d"
+  },
+  "mix:keywords:bea44ec0d5aab6fed4ef1f52763efd79": {
+    "return": "{\"high_level_keywords\": [\"Agronomy assistance\", \"Soil test analysis\", \"Product recommendation\", \"Missing information\"], \"low_level_keywords\": [\"High phosphorus\", \"Soil test results\", \"Product selection\", \"Follow-up question\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nMy soil test shows high phosphorus. Which product should I use \nyes \nyes\n\nQuestion:\nyes\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942066,
+    "update_time": 1767942066,
+    "_id": "mix:keywords:bea44ec0d5aab6fed4ef1f52763efd79"
+  },
+  "mix:query:fc3a7e1863c8124f473cd6a24bf4124b": {
+    "return": "Which product would you like to know about?",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nMy soil test shows high phosphorus. Which product should I use \nyes \nyes\n\nQuestion:\nyes\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Agronomy assistance, Soil test analysis, Product recommendation, Missing information",
+      "ll_keywords": "High phosphorus, Soil test results, Product selection, Follow-up question",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942069,
+    "update_time": 1767942069,
+    "_id": "mix:query:fc3a7e1863c8124f473cd6a24bf4124b"
+  },
+  "mix:keywords:f693223467bb7f0fc1885b1b78beeb49": {
+    "return": "{\"high_level_keywords\": [\"Product recommendation\", \"Agronomy assistance\"], \"low_level_keywords\": [\"Farming products\", \"Crop type\", \"Pest identification\", \"Disease identification\", \"Soil conditions\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nyes \nyes \ntell me which products must be used\n\nQuestion:\ntell me which products must be used\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942092,
+    "update_time": 1767942092,
+    "_id": "mix:keywords:f693223467bb7f0fc1885b1b78beeb49"
+  },
+  "mix:query:d94a1da968488eee14e61e97602aa68e": {
+    "return": "Please specify which crops you are interested in so I can provide the most relevant product recommendations.",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nyes \nyes \ntell me which products must be used\n\nQuestion:\ntell me which products must be used\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Product recommendation, Agronomy assistance",
+      "ll_keywords": "Farming products, Crop type, Pest identification, Disease identification, Soil conditions",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942095,
+    "update_time": 1767942095,
+    "_id": "mix:query:d94a1da968488eee14e61e97602aa68e"
+  },
+  "mix:keywords:036dad58c20d1d188283df8379ae42fc": {
+    "return": "{\"high_level_keywords\": [\"Product recommendation\", \"Agricultural products\"], \"low_level_keywords\": [\"Paddy\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "User's previous questions and context: yes tell me which products must be used i mentioned paddy earlier right\nNow answer: i mentioned paddy earlier right",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942113,
+    "update_time": 1767942113,
+    "_id": "mix:keywords:036dad58c20d1d188283df8379ae42fc"
+  },
+  "mix:query:4f8410917344cebd8d3d34e1eabe451c": {
+    "return": "Sure, I can help you with that! For paddy crops, Poshak Level-1 is recommended. It's a liquid fermented organic fertilizer suitable for the vegetative stage, helping with nutrient loss, weak roots, and poor foliage. It can be applied via drip irrigation every 7-10 days at a dosage of 1 L/acre.\n\nAdditionally, Aadhaar Gold is also suitable for paddy. It's a granular biofertilizer consortium that enhances soil fertility and crop productivity. The recommended dosage for paddy is 4 kg/acre, applied once per season during the vegetative stage with FYM or by broadcasting.\n\n### References\n\n* [1] Poshak Level-1 (Liquid Fermented Organic Fertilizer)\n* [1] Aadhaar Gold (Carrier Consortium Granular Biofertilizer)",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "User's previous questions and context: yes tell me which products must be used i mentioned paddy earlier right\nNow answer: i mentioned paddy earlier right",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Product recommendation, Agricultural products",
+      "ll_keywords": "Paddy",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767942116,
+    "update_time": 1767942116,
+    "_id": "mix:query:4f8410917344cebd8d3d34e1eabe451c"
   }
 }

@@ -14,7 +14,8 @@ from app.services.chat_rules import (
     is_factual_company_question,
     is_direct_knowledge_question,
     is_greeting_or_acknowledgment,
-    is_problem_diagnosis_question
+    is_problem_diagnosis_question,
+    is_summary_or_list_question
 )
 from app.services.followup_service import (
     needs_follow_up,
@@ -277,7 +278,121 @@ def handle_chat(session_id, user_message):
         messages.insert_one(message_doc(session_id, "assistant", answer))
         print(f"⏱️ Total time: {time.time()-start_time:.2f}s")
         return answer
-
+    # 📋 SUMMARY OR LIST QUESTIONS → COMPILE FROM CONVERSATION HISTORY
+    # These ask for recaps/lists of previously discussed information
+    if is_summary_or_list_question(user_message):
+        print("✅ SUMMARY/LIST QUESTION - COMPILING FROM HISTORY")
+        t3 = time.time()
+        
+        # Get conversation history
+        history = get_history(session_id)
+        print(f"📚 Total conversation messages: {len(history)}")
+        
+        import re
+        
+        # Product keywords with variants (English and local language)
+        product_variants = {
+            "invictus": ["invictus", "ఇన్విక్టస్"],
+            "poshak": ["poshak", "పోషక్"],
+            "p-factor": ["p-factor", "pfactor", "p factor", "పీ-ఫాక్టర్", "పీ ఫ్యాక్టర్"],
+            "n-factor": ["n-factor", "nfactor", "n factor", "ఎన్-ఫాక్టర్", "ఎన్ ఫ్యాక్టర్"],
+            "k-factor": ["k-factor", "kfactor", "k factor", "కె-ఫాక్టర్"],
+            "aadhaar": ["aadhaar", "aadhaar gold", "అధార్"],
+            "biofactor": ["biofactor", "బయోఫ్యాక్టర్"],
+            "zn-factor": ["zn-factor", "జెడ్ఎన్-ఫాక్టర్"]
+        }
+        
+        # Step 1: Identify which products USER explicitly asked about
+        print("🔍 Identifying products USER asked about...")
+        asked_products = {}  # normalized_name: (original_name, count)
+        
+        for msg in history:
+            if msg["role"] == "user":
+                user_text = msg["content"].lower()
+                for norm_name, variants in product_variants.items():
+                    for variant in variants:
+                        if variant.lower() in user_text:
+                            if norm_name not in asked_products:
+                                asked_products[norm_name] = (norm_name, 0)
+                            asked_products[norm_name] = (norm_name, asked_products[norm_name][1] + 1)
+        
+        print(f"📊 Products USER asked about: {list(asked_products.keys())}")
+        
+        # Step 2: Extract dosage info ONLY for products user explicitly asked about
+        dosage_info = {}
+        
+        # Units in different languages - including actual forms found in responses
+        unit_patterns = [
+            # English variants
+            "litre", "liter", "lt", "ltr",
+            # Hindi variants  
+            "लीटर", "किलोग्राम", "ग्राम", "मिली",
+            # Telugu variants - actual forms found in responses
+            "లీటరు", "కిలోల", "గ్రాముల", "మిల్లీ",
+            # Generic forms
+            "kg", "kilo", "ml", "gm", "gram"
+        ]
+        
+        for msg in history:
+            if msg["role"] == "assistant":
+                content = msg["content"]
+                
+                # For each product the user asked about
+                for norm_name, variants in product_variants.items():
+                    # Only process if user asked about this product
+                    if norm_name not in asked_products:
+                        continue
+                    
+                    # Skip if already extracted
+                    if norm_name in dosage_info:
+                        continue
+                    
+                    # Look for dosage pattern in response
+                    for variant in variants:
+                        # Build pattern with all unit types
+                        units_pattern = "|".join(unit_patterns)
+                        pattern = rf'{re.escape(variant)}.*?(\d+(?:\.\d+)?)\s*({units_pattern})'
+                        match = re.search(pattern, content, re.IGNORECASE)
+                        if match:
+                            dosage_amount = match.group(1)
+                            dosage_unit = match.group(2)
+                            dosage_info[norm_name] = f"{dosage_amount} {dosage_unit}"
+                            print(f"📍 Found {norm_name}: {dosage_amount} {dosage_unit}")
+                            break  # Move to next product once found
+        
+        print(f"📊 Extracted dosages for asked products: {dosage_info}")
+        
+        # Step 3: Format the compiled response
+        if dosage_info:
+            # Build formatted response in user's detected language
+            response_lines = ["Here are all the dosages we have discussed:"]
+            
+            # Maintain order of asked products
+            for product_name in asked_products.keys():
+                if product_name in dosage_info:
+                    dosage = dosage_info[product_name]
+                    # Normalize product name for display
+                    display_product = product_name.upper().replace("-", "-")
+                    response_lines.append(f"- {display_product}: {dosage} per acre")
+            
+            compiled_answer = "\n".join(response_lines)
+            
+            # Ensure response is in user's language
+            compiled_answer = ensure_language_match(compiled_answer, detected_language)
+        else:
+            # No dosage info found, still ask LightRAG but with context
+            print("⚠️ No dosage info found in history, querying LightRAG with context")
+            recent_history = get_history(session_id)[-6:]
+            user_messages = [msg["content"] for msg in recent_history if msg["role"] == "user"]
+            context_text = " ".join(user_messages)
+            comprehensive_query = f"User's previous questions and context: {context_text}\nNow answer: {user_message}"
+            compiled_answer = clean_response(query_lightrag(comprehensive_query, [], mode="mix", language=detected_language))
+            compiled_answer = ensure_language_match(compiled_answer, detected_language)
+        
+        print(f"✅ Compiled response (took {time.time()-t3:.2f}s)")
+        messages.insert_one(message_doc(session_id, "assistant", compiled_answer))
+        print(f"⏱️ Total time: {time.time()-start_time:.2f}s")
+        return compiled_answer
     # �🔁 FOLLOW-UP LOGIC FOR PROBLEM DIAGNOSIS
     # Always ask follow-ups for diagnosis until we have enough context (language-agnostic)
     t_followup = time.time()
