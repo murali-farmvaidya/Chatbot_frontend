@@ -1076,5 +1076,173 @@
     "create_time": 1767942461,
     "update_time": 1767942461,
     "_id": "mix:query:c07bed5eaa736e3c735785228ab1a166"
+  },
+  "mix:keywords:b27eac7b9f96a82b6c8bd94870ae32e3": {
+    "return": "{\"high_level_keywords\": [\"Agronomy assistant\", \"Crop yield\", \"Planting stage\"], \"low_level_keywords\": [\"Paddy\", \"Red soil\", \"Drip irrigation\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nmy crop is not giving good yield \ni am growing paddy and it is in mid stage \nred soil using drip irrigation\n\nQuestion:\nred soil using drip irrigation\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767943454,
+    "update_time": 1767943454,
+    "_id": "mix:keywords:b27eac7b9f96a82b6c8bd94870ae32e3"
+  },
+  "mix:query:9ef1c463e50a3758774105f1db3f8d55": {
+    "return": "Can you please specify the mid-stage of your paddy crop? For example, is it the vegetative stage, flowering stage, or pod formation stage?",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nmy crop is not giving good yield \ni am growing paddy and it is in mid stage \nred soil using drip irrigation\n\nQuestion:\nred soil using drip irrigation\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Agronomy assistant, Crop yield, Planting stage",
+      "ll_keywords": "Paddy, Red soil, Drip irrigation",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767943458,
+    "update_time": 1767943458,
+    "_id": "mix:query:9ef1c463e50a3758774105f1db3f8d55"
+  },
+  "mix:keywords:d8cee761110db24f0cf3c8edddbd46ca": {
+    "return": "{\"high_level_keywords\": [\"Crop yield\", \"Agronomy assistance\", \"Harvest stage\"], \"low_level_keywords\": [\"Paddy\", \"Red soil\", \"Drip irrigation\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nmy crop is not giving good yield \ni am growing paddy and it in harvest stage \ni am using red soil and drip irrgation\n\nQuestion:\ni am using red soil and drip irrgation\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767943611,
+    "update_time": 1767943611,
+    "_id": "mix:keywords:d8cee761110db24f0cf3c8edddbd46ca"
+  },
+  "mix:query:8be40cf7e6d67d89c40b63fd28acdb36": {
+    "return": "I am sorry, but I need more information to provide a specific recommendation.\n\nCould you please tell me more about the specific problems you are facing with your paddy crop's yield? For example, are there issues with plant growth, nutrient deficiency, or pest infestation?",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nmy crop is not giving good yield \ni am growing paddy and it in harvest stage \ni am using red soil and drip irrgation\n\nQuestion:\ni am using red soil and drip irrgation\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Crop yield, Agronomy assistance, Harvest stage",
+      "ll_keywords": "Paddy, Red soil, Drip irrigation",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767943616,
+    "update_time": 1767943616,
+    "_id": "mix:query:8be40cf7e6d67d89c40b63fd28acdb36"
+  },
+  "mix:keywords:82a947142b6e0695ec5044e1ea5c525a": {
+    "return": "{\"high_level_keywords\": [\"Crop yield\", \"Agronomy assistant\", \"Agricultural advice\"], \"low_level_keywords\": [\"Paddy crop\", \"Early stage\", \"Red soil\", \"Drip irrigation\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nmy crop is not giving good yield \ni am grwing paddy and it in early stage \ni am using red soil and drip irrigation\n\nQuestion:\ni am using red soil and drip irrigation\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767943903,
+    "update_time": 1767943903,
+    "_id": "mix:keywords:82a947142b6e0695ec5044e1ea5c525a"
+  },
+  "mix:query:3b30e81b99fef7b36354c95b0efa54a4": {
+    "return": "The user is growing paddy in the early stage in red soil and using drip irrigation. To provide tailored advice, could you please tell me what specific issues you are observing with your paddy crop, such as signs of deficiency or pest problems?",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "You are an agronomy assistant. Use the provided user context and question. If the context already has enough details, give a direct, concise answer. If a critical detail is missing, ask ONLY one concise follow-up question to collect that specific detail. Never repeat follow-ups already asked.\n\nContext:\nmy crop is not giving good yield \ni am grwing paddy and it in early stage \ni am using red soil and drip irrigation\n\nQuestion:\ni am using red soil and drip irrigation\n\nAnswer:",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Crop yield, Agronomy assistant, Agricultural advice",
+      "ll_keywords": "Paddy crop, Early stage, Red soil, Drip irrigation",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767943907,
+    "update_time": 1767943907,
+    "_id": "mix:query:3b30e81b99fef7b36354c95b0efa54a4"
+  },
+  "mix:keywords:d68bf478c12c1e52220fb06cd4e8023f": {
+    "return": "{\"high_level_keywords\": [\"Crop problem diagnosis\", \"Yield improvement\", \"Agricultural recommendations\"], \"low_level_keywords\": [\"Paddy crop\", \"Early growth stage\", \"Red soil\", \"Drip irrigation\", \"Fertilizer doses\", \"Irrigation schedule\", \"Pest management\", \"Disease management\", \"Nutrient deficiency\", \"Management practices\"]}",
+    "cache_type": "keywords",
+    "chunk_id": null,
+    "original_prompt": "CROP PROBLEM DIAGNOSIS\n\nFarmer's problem: my crop is not giving good yield\n\nFarmer provided the following information:\n- Crop name and growth stage: i am grwing paddy and it in early stage\n- Soil type and irrigation method: i am using red soil and drip irrigation\n- Fertilizers and sprays already used: Not provided\n\nProvide comprehensive recommendations including:\n1. Specific fertilizer doses based on soil type and growth stage\n2. Irrigation schedule and water management\n3. Pest/disease management if applicable\n4. Nutrient deficiency corrections if needed\n5. Any other management practices\n\nBe specific with product names, doses (kg/liters), timing (months), and application methods.",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767943929,
+    "update_time": 1767943929,
+    "_id": "mix:keywords:d68bf478c12c1e52220fb06cd4e8023f"
+  },
+  "mix:query:e15604db08726f92a269d4d23d94a70e": {
+    "return": "I can help you with that. Since the yield is not good for your paddy crop, we need to look into its nutrition and overall health.\n\nFor your paddy crop in the early stage, and considering you use drip irrigation and red soil, here are some recommendations:\n\nFertilizer Recommendations:\nFor early stage paddy, it's good to focus on root development and overall vegetative growth. Using a balanced nutrient supply at this stage is important.\n\nConsider using Poshak-L1 during the vegetative stage. It's a liquid fermented organic manure that can be applied at 1 liter per acre through drip irrigation or as a drenching or foliar spray every 15-20 days. This will help with nutrient uptake and promote healthy foliage and root growth.\n\nAnother option is to use FLOWMIN 08-08-08, which is designed for drip irrigation. For the early crop stage, you can apply 2.5–4.0 liters per acre via drip every 4 days. This product provides NPK in a balanced form and helps support strong roots and healthy growth.\n\nIf you are facing nutrient loss or weak roots, Poshak-L1 can help. For paddy, applying 1 L/acre via irrigation every 7–10 days is recommended.\n\nIrrigation Management:\nSince you are using drip irrigation, it's important to maintain consistent soil moisture. For crops like paddy, maintaining adequate moisture is crucial, especially during the early stages. The exact frequency will depend on your red soil type and weather conditions, but ensure the soil remains moist without being waterlogged.\n\nNutrient Deficiency Correction:\nIf you observe any specific deficiency symptoms like yellowing leaves (chlorosis), stunted growth, or poor foliage, you can address them with specific micronutrient applications. For instance, NUTRI6 / Formula 6 is a liquid micronutrient blend that can be sprayed at 500 ml/acre (2.5 ml/liter of water) when deficiency is observed, with better results if sprayed every 15 days for vegetables.\n\nOther Management Practices:\nEnsure that the land is well-prepared before planting. Using well-decomposed farmyard manure or compost along with your fertilizers can also improve soil health and nutrient availability in red soil.\n\nReferences:\n* [1] Biofactor knowledge base 21112025.pdf",
+    "cache_type": "query",
+    "chunk_id": null,
+    "original_prompt": "CROP PROBLEM DIAGNOSIS\n\nFarmer's problem: my crop is not giving good yield\n\nFarmer provided the following information:\n- Crop name and growth stage: i am grwing paddy and it in early stage\n- Soil type and irrigation method: i am using red soil and drip irrigation\n- Fertilizers and sprays already used: Not provided\n\nProvide comprehensive recommendations including:\n1. Specific fertilizer doses based on soil type and growth stage\n2. Irrigation schedule and water management\n3. Pest/disease management if applicable\n4. Nutrient deficiency corrections if needed\n5. Any other management practices\n\nBe specific with product names, doses (kg/liters), timing (months), and application methods.",
+    "queryparam": {
+      "mode": "mix",
+      "response_type": "Multiple Paragraphs",
+      "top_k": 40,
+      "chunk_top_k": 20,
+      "max_entity_tokens": 6000,
+      "max_relation_tokens": 8000,
+      "max_total_tokens": 30000,
+      "hl_keywords": "Crop problem diagnosis, Yield improvement, Agricultural recommendations",
+      "ll_keywords": "Paddy crop, Early growth stage, Red soil, Drip irrigation, Fertilizer doses, Irrigation schedule, Pest management, Disease management, Nutrient deficiency, Management practices",
+      "user_prompt": "",
+      "enable_rerank": true
+    },
+    "create_time": 1767943936,
+    "update_time": 1767943936,
+    "_id": "mix:query:e15604db08726f92a269d4d23d94a70e"
   }
 }

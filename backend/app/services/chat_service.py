@@ -422,50 +422,57 @@ def handle_chat(session_id, user_message):
             recent_history = get_history(session_id)[-10:]  # Last 10 messages
             provided = extract_provided_info(recent_history)
             print(f"🔍 Extracted provided info (took {time.time()-t_hist:.2f}s)")
+            print(f"📊 Provided info: {provided}")
             
             # If user provided crop+stage AND soil info, skip follow-ups
             has_crop_info = provided["crop_provided"] and provided["stage_provided"]
             has_soil_info = provided["soil_provided"]
             
-            # For better UX: if crop is mentioned but from OLD conversation (more than 5 messages ago),
-            # we should still ask follow-ups for the NEW question
-            # Check if crop/stage is in the CURRENT message specifically
-            current_msg_history = [{"role": "user", "content": user_message}]
-            current_provided = extract_provided_info(current_msg_history)
+            # Check if we have ENOUGH information to answer (not necessarily ALL fields)
+            # Essential: crop + stage OR problem description with symptoms
+            # Nice to have: soil, irrigation, fertilizers (can still answer without these)
+            has_essential_info = has_crop_info or (provided["soil_provided"] and provided["irrigation_provided"])
             
-            if has_crop_info and has_soil_info:
+            if has_essential_info:
                 # User gave enough info, skip follow-ups entirely
-                print("✅ USER PROVIDED COMPREHENSIVE INFO, SKIPPING FOLLOW-UPS")
+                print("✅ USER PROVIDED SUFFICIENT INFO, SKIPPING FOLLOW-UPS AND ANSWERING DIRECTLY")
                 sessions.update_one(
                     {"_id": ObjectId(session_id)},
                     {"$set": {"followup_count": MAX_FOLLOWUPS, "awaiting_followup": False}}
                 )
                 session["followup_count"] = MAX_FOLLOWUPS
                 session["awaiting_followup"] = False
-            elif current_provided["crop_provided"] and current_provided["stage_provided"]:
-                # User mentioned crop+stage in current question, use lighter follow-up flow
-                # Only need to ask for missing info (soil/irrigation/fertilizers)
-                print("✅ USER PROVIDED CROP+STAGE IN QUESTION, REDUCED FOLLOW-UPS")
-                # Start at count 1 (skip crop/stage question)
-                sessions.update_one(
-                    {"_id": ObjectId(session_id)},
-                    {"$set": {"followup_count": 1, "awaiting_followup": False}}
-                )
-                session["followup_count"] = 1
-                session["awaiting_followup"] = False
+                # Continue to final answer generation (don't ask follow-ups)
             else:
-                # Reset for new question
-                sessions.update_one(
-                    {"_id": ObjectId(session_id)},
-                    {"$set": {"followup_count": 0, "awaiting_followup": False}}
-                )
-                session["followup_count"] = 0
-                session["awaiting_followup"] = False
+                # Check if crop+stage is in the CURRENT message specifically
+                current_msg_history = [{"role": "user", "content": user_message}]
+                current_provided = extract_provided_info(current_msg_history)
+                
+                if current_provided["crop_provided"] and current_provided["stage_provided"]:
+                    # User mentioned crop+stage in current question, use lighter follow-up flow
+                    # Only need to ask for missing info (soil/irrigation/fertilizers)
+                    print("✅ USER PROVIDED CROP+STAGE IN QUESTION, REDUCED FOLLOW-UPS")
+                    # Start at count 1 (skip crop/stage question)
+                    sessions.update_one(
+                        {"_id": ObjectId(session_id)},
+                        {"$set": {"followup_count": 1, "awaiting_followup": False}}
+                    )
+                    session["followup_count"] = 1
+                    session["awaiting_followup"] = False
+                else:
+                    # Reset for new question - need to ask follow-ups
+                    sessions.update_one(
+                        {"_id": ObjectId(session_id)},
+                        {"$set": {"followup_count": 0, "awaiting_followup": False}}
+                    )
+                    session["followup_count"] = 0
+                    session["awaiting_followup"] = False
         
         # Default followup counter to 0 if missing
         if session.get("followup_count") is None:
             session["followup_count"] = 0
 
+        # Only generate follow-ups if we haven't reached finalization threshold
         if not can_finalize(session):
             print("✅ GENERATING FOLLOW-UP QUESTION")
             t_gen = time.time()
@@ -474,10 +481,10 @@ def handle_chat(session_id, user_message):
             
             # If generate_followup returns None, it means all info is collected
             if followup_q is None:
-                print("✅ ALL INFO COLLECTED, PROCEEDING TO FINAL ANSWER")
+                print("✅ ALL INFO COLLECTED BY generate_followup, PROCEEDING TO FINAL ANSWER")
                 sessions.update_one(
                     {"_id": ObjectId(session_id)},
-                    {"$set": {"awaiting_followup": False}}
+                    {"$set": {"awaiting_followup": False, "followup_count": MAX_FOLLOWUPS}}
                 )
                 # Don't return, continue to final answer generation
             else:
@@ -485,7 +492,7 @@ def handle_chat(session_id, user_message):
                 return followup_q
 
         # Enough followups → finalize and continue to final answer
-        print("✅ FINALIZING AFTER FOLLOW-UPS")
+        print("✅ FINALIZING AFTER FOLLOW-UPS - HAVE SUFFICIENT CONTEXT")
         sessions.update_one(
             {"_id": ObjectId(session_id)},
             {"$set": {"awaiting_followup": False}}

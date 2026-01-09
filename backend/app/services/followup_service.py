@@ -42,30 +42,35 @@ def extract_provided_info(conversation_history: list) -> dict:
     # Combine all user messages to analyze
     all_user_text = " ".join([msg["content"].lower() for msg in conversation_history if msg["role"] == "user"])
     
-    # Common crop names
+    # Common crop names (more comprehensive)
     crop_keywords = ["paddy", "rice", "wheat", "cotton", "tomato", "chili", "maize", "corn", 
-                     "వరి", "పనస", "రైస్", "వరి", "టమాటా", "మొక్కజొన్న",
-                     "धान", "गेहूं", "कपास", "टमाटर", "मिर्च", "मक्का"]
+                     "వరి", "పనస", "రైస్", "టమాటా", "మొక్కజొన్న",
+                     "धान", "गेहूं", "कपास", "टमाटर", "मिर्च", "मक्का",
+                     "crop", "పంట", "फसल"]
     
-    # Growth stages
+    # Growth stages (more comprehensive)
     stage_keywords = {
-        "early": ["early", "initial", "starting", "beginning", "vegetative", "ప్రారంభ", "शुरुआत"],
-        "mid": ["mid", "middle", "flowering", "మధ్య", "मध्य"],
-        "final": ["final", "near harvest", "harvest", "mature", "ripening", "పండిన", "अंतिम", "कटाई"]
+        "early": ["early", "initial", "starting", "beginning", "vegetative", "young", "seedling",
+                  "ప్రారంభ", "प्रारंभिक", "शुरुआत", "मुळायम"],
+        "mid": ["mid", "middle", "flowering", "budding", "growth",
+                "మధ్య", "मध्य", "फूल"],
+        "final": ["final", "near harvest", "harvest", "mature", "ripening", "late", "పండిన", "పండు",
+                  "अंतिम", "कटाई", "पकना", "पका"]
     }
     
-    # Soil types
-    soil_keywords = ["red", "black", "loam", "clay", "sandy", "soil",
-                     "ఎర్ర", "నల్ల", "నేల", "लाल", "काली", "मिट्टी"]
+    # Soil types (more comprehensive)
+    soil_keywords = ["red", "black", "loam", "clay", "sandy", "soil", "laterite",
+                     "ఎర్ర", "నల్ల", "నేల", "मिट्टी", "लाल", "काली", "दोमट"]
     
-    # Irrigation methods
-    irrigation_keywords = ["drip", "sprinkler", "flood", "irrigation", 
-                          "డ్రిప్", "स्प्रिंकलर"]
+    # Irrigation methods (more comprehensive)
+    irrigation_keywords = ["drip", "sprinkler", "flood", "irrigation", "water", "watering",
+                          "డ్రిప్", "స్ప్రింక్లర్", "నీరు", "పారుదల",
+                          "ड्रिप", "स्प्रिंकलर", "पानी", "सिंचाई"]
     
-    # Fertilizer mentions
+    # Fertilizer mentions (including "not used")
     fertilizer_keywords = ["fertilizer", "fertiliser", "npk", "urea", "dap", "not used", "no fertilizer",
-                          "nothing", "none", "not", "no spray",
-                          "ఎరువు", "उर्वरक", "వాడలేదు", "इस्तेमाल", "లేదు"]
+                          "nothing", "none", "not", "no spray", "haven't used", "didn't use",
+                          "ఎరువు", "వాడలేదు", "లేదు", "उर्वरक", "इस्तेमाल", "नहीं"]
     
     info = {
         "crop_provided": any(kw in all_user_text for kw in crop_keywords),
