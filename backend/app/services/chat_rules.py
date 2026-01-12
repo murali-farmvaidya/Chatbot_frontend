@@ -76,6 +76,43 @@ def is_greeting_or_acknowledgment(text: str) -> bool:
     return False
 
 
+# ---------------- HELPER: FOLLOW-UP DETECTION ----------------
+def is_followup_reference(text: str) -> bool:
+    """
+    Detect if question is a follow-up using pronouns/references
+    Examples: "its dosage", "what about it", "how much of that", "ఆది", "దాని"
+    Must be SHORT and contain explicit pronouns to avoid false positives
+    """
+    t = text.lower().strip()
+    
+    # Require question to be relatively short (< 8 words) to be a follow-up
+    # This prevents "Benefits of Bio NPK" from being treated as follow-up
+    word_count = len(t.split())
+    if word_count > 7:
+        return False
+    
+    followup_keywords = [
+        # English pronouns (more specific)
+        " its ", "its ", " its",  # "its dosage", "what is its"
+        " it ", " it's ",
+        "that product", "that one", "the same",
+        "about it", "of that", "of it",
+        # English yes/no/confirmation responses
+        " yes", "yes ", " yes ", " no", "no ", " no ",
+        "yeah", "nope", " okay", "ok ", " ok ", " sure", "sure ",
+        # Telugu pronouns
+        "ఆది", "దాని", "అది", "ఇది", "అదే", "ఇదే",
+        "అవును", "లేదు", "సరే",  # yes/no/ok in Telugu
+        # Hindi pronouns  
+        "उसका", "इसका", "वह", "यह", "उसी", "इसी",
+        "हाँ", "नहीं", "ठीक है"  # yes/no/ok in Hindi
+    ]
+    
+    # Add spaces for better matching
+    text_with_spaces = f" {t} "
+    return any(kw in text_with_spaces for kw in followup_keywords)
+
+
 # ---------------- DOSAGE ----------------
 def is_dosage_question(text: str) -> bool:
     keywords = [
@@ -92,15 +129,25 @@ def is_dosage_question(text: str) -> bool:
         "zn-factor", "znfactor", "zn factor",
         "aadhaar", "aadhar",
         "poshak", "పోషక్",
-        "invictus", "ఇన్విక్టస్",
+        "invictus",
         "bio npk", "bionpk",
         "bio double action"
     ]
     
     t = text.lower()
+    original = text  # Keep original text for Unicode matching
     
-    # Check for dosage keywords
-    if any(k in t for k in keywords):
+    # Exclude knowledge questions UNLESS it's a follow-up reference (like "what is its dosage")
+    knowledge_excludes = ["what is", "tell me", "explain", "about", "గురించి", "ఏమిటి", "चेप్पंది", "क्या है", "के बारे में"]
+    has_knowledge_exclude = any(exc in t for exc in knowledge_excludes) or any(exc in original for exc in knowledge_excludes)
+    if has_knowledge_exclude and not is_followup_reference(text):
+        return False
+    
+    # Telugu product names that need Unicode matching
+    telugu_products = ["ఇన్విక్టస్", "పోషక్"]
+    
+    # Check for dosage keywords in both lowercased and original text
+    if any(k in t for k in keywords) or any(k in original for k in keywords):
         return True
     
     # Check if asking about product (likely wants dosage info)
@@ -111,6 +158,11 @@ def is_dosage_question(text: str) -> bool:
             word_count = len(t.split())
             if word_count <= 4:
                 return True
+    
+    # Check Telugu product names in original text
+    for product in telugu_products:
+        if product in original:
+            return True
     
     return False
 
@@ -152,8 +204,9 @@ def is_direct_knowledge_question(text: str) -> bool:
         "what is", "tell me", "explain",
         "usage", "how is it used", "how to use",
         "benefits", "features", "about",
-        "గురించి", "చెప్పండి", "ఏమిటి",
-        "के बारे में", "बताइए", "क्या है"
+        "fertilizer", "fertilizers",
+        "గురించి", "చెప్పండి", "ఏమిటి", "వాడే", "వాడకం", "ఎరువుల", "ఎరువులు",
+        "के बारे में", "बताइए", "क्या है", "खाद", "उर्वरक"
     ]
 
     products = [
@@ -163,30 +216,97 @@ def is_direct_knowledge_question(text: str) -> bool:
         "zn-factor", "znfactor",
         "p-factor", "pfactor", "p factor",
         "k-factor", "kfactor", "k factor",
-        "biofactor", "బయోఫ్యాక్టర్",
+        "biofactor", "bio factor", "బయోఫ్యాక్టర్", "బయో ఫ్యాక్టర్",
         "farmvaidya", "ఫార్మ్ వైద్య",
         "bio double action", "biodoubleaction",
-        "बायो डबल एक्शन"
+        "बायो डबल एक्शन", "बायोफैक्टर", "बायो फैक्टर"
     ]
 
     t = text.lower()
-    return any(k in t for k in keywords) and any(p in t for p in products)
+    original = text  # Keep original for Unicode matching
+    
+    # Check in both normalized and original text
+    keyword_match = any(k in t for k in keywords) or any(k in original for k in keywords)
+    product_match = any(p in t for p in products) or any(p in original for p in products)
+    
+    return keyword_match and product_match
 
 
 # ---------------- PROBLEM DIAGNOSIS ----------------
 def is_problem_diagnosis_question(text: str) -> bool:
     """
-    Questions about plant problems, pests, diseases, yield issues that need diagnosis
+    Questions about SPECIFIC plant problems, pests, diseases that need detailed diagnosis.
+    General "how to improve yield" questions should NOT trigger this.
+    Only trigger for VISIBLE PROBLEMS or specific symptoms.
     """
-    problem_keywords = [
-        "problem", "issue", "pest", "disease", "infection",
-        "insect", "bug", "damaged", "dying", "yellow",
-        "wilting", "spots", "not growing", "poor growth", "low yield",
-        "not giving", "yield", "production", "harvest",
-        "కీటకం", "సమస్య", "వ్యాధి", "దిగుబడి", "పంట రావడం లేదు",
-        "कीट", "समस्या", "रोग", "बीमारी", "उपज", "पैदावार"
+    # Specific problem indicators (actual issues)
+    specific_problem_keywords = [
+        "yellow", "yellowing", "wilting", "spots", "damaged", "dying",
+        "not growing", "stunted", "brown", "curling", "falling",
+        "pest", "insect", "bug", "worm", "caterpillar",
+        "disease", "infection", "fungus", "rot", "blight",
+        "పసుపు", "ఎండిపోతున్నది", "కీటకం", "వ్యాధి", "నాశనం",
+        "पीला", "मुरझाना", "कीट", "रोग", "बीमारी", "कीड़ा"
+    ]
+    
+    # General advice keywords (should NOT trigger detailed diagnosis)
+    general_advice_keywords = [
+        "how to get", "how to improve", "how to increase", "tips for",
+        "suggest", "recommend", "best practices", "management",
+        "ఎలా పెంచాలి", "సూచనలు", "सुझाव", "कैसे बढ़ाएं"
     ]
     
     t = text.lower()
-    return any(k in t for k in problem_keywords)
+    
+    # Check if it's a general advice question (not specific problem)
+    has_general_advice = any(k in t for k in general_advice_keywords)
+    has_specific_problem = any(k in t for k in specific_problem_keywords)
+    
+    # Only trigger diagnosis if there's a SPECIFIC problem mentioned
+    # General yield/production questions without symptoms → regular knowledge question
+    if has_general_advice and not has_specific_problem:
+        return False  # General advice, not a problem diagnosis
+    
+    return has_specific_problem
+
+
+# ---------------- SUMMARY & LIST QUESTIONS ----------------
+def is_summary_or_list_question(text: str) -> bool:
+    """
+    Detect questions asking for summaries, lists, or recaps of previously discussed information.
+    These should compile from conversation history rather than sending to LightRAG.
+    """
+    if not text or len(text.strip()) == 0:
+        return False
+    
+    t = text.lower()
+    original = text
+    
+    # English summary keywords
+    summary_keywords = [
+        "tell me all", "list all", "recap", "summary", "summarize",
+        "all dosages", "all products", "all information",
+        "until now", "so far", "discussed", "mention", "mentioned",
+        "what we discussed", "everything about", "all about",
+        "complete list", "full list", "entire list"
+    ]
+    
+    # Telugu summary keywords
+    telugu_keywords = [
+        "అన్ని", "చెప్పు", "జాబితా", "ఇప్పటిదాకా", "చర్చించిన",
+        "సారాంశం", "సమాచారం", "మోతాదులు", "ఉత్పత్తులు"
+    ]
+    
+    # Hindi summary keywords
+    hindi_keywords = [
+        "सभी", "सूची", "सारांश", "अब तक", "जानकारी", "खुराक",
+        "उत्पाद", "बताइए", "सबको", "चर्चा"
+    ]
+    
+    all_keywords = summary_keywords + telugu_keywords + hindi_keywords
+    
+    # Check if any keyword matches
+    match_count = sum(1 for k in all_keywords if k in t or k in original)
+    
+    return match_count >= 1
 

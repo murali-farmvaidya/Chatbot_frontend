@@ -74,10 +74,14 @@ logs/
 Thumbs.db
 desktop.ini
 
+# Test files
+test_*.py
 
-
-#test files
-test_languages.py
+# Old/redundant startup scripts
+check_services.py
+start_backend_external_lightrag.py
+restart_clean.ps1
+start_all_services.ps1
 start_backend.ps1
-test_greetings.py
-test_greetings.py
+start_backend_only.ps1
+stop_all_services.ps1
